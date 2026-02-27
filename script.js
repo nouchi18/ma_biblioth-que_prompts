@@ -1,34 +1,40 @@
-const prompts = [
-    { title: "Portrait Cinématique", category: "CINEMATIC", text: "Ultra-realistic, 8K cinematic portrait of a man, dramatic lighting, orange and blue tones..." },
-    { title: "Style Vogue B&W", category: "FASHION", text: "High-resolution black and white Vogue-style magazine cover, studio lighting..." },
-    // Ajoutez vos prompts ici
-];
+// Fonction pour copier le texte
+function copyPrompt(button) {
+    const card = button.closest('.card-content');
+    const text = card.querySelector('.prompt-text').innerText;
 
-function displayPrompts(data) {
-    const container = document.getElementById('promptGrid');
-    container.innerHTML = '';
-    data.forEach(p => {
-        container.innerHTML += `
-            <div class="card">
-                <span class="category">${p.category}</span>
-                <h3>${p.title}</h3>
-                <code class="prompt-text" id="${p.title}">${p.text}</code>
-                <button class="copy-btn" onclick="copyToClipboard('${p.text}')">Copier le Prompt</button>
-            </div>
-        `;
+    navigator.clipboard.writeText(text).then(() => {
+        const originalText = button.innerHTML;
+        button.innerHTML = '<i class="fas fa-check"></i> Copied!';
+        button.style.backgroundColor = '#27ae60';
+
+        setTimeout(() => {
+            button.innerHTML = originalText;
+            button.style.backgroundColor = '#333';
+        }, 2000);
     });
 }
 
-function copyToClipboard(text) {
-    navigator.clipboard.writeText(text);
-    alert("Prompt copié !");
-}
+// Recherche simple (filtre visuel)
+document.getElementById('searchInput').addEventListener('input', function(e) {
+    const term = e.target.value.toLowerCase();
+    const cards = document.querySelectorAll('.prompt-card');
 
-function filterPrompts() {
-    const val = document.getElementById('searchInput').value.toLowerCase();
-    const filtered = prompts.filter(p => p.title.toLowerCase().includes(val) || p.category.toLowerCase().includes(val));
-    displayPrompts(filtered);
-}
+    cards.forEach(card => {
+        const title = card.querySelector('h3').innerText.toLowerCase();
+        if(title.includes(term)) {
+            card.style.display = 'block';
+        } else {
+            card.style.display = 'none';
+        }
+    });
+});
 
-// Initialisation
-displayPrompts(prompts);
+// Animation simple des onglets
+const tabs = document.querySelectorAll('.tabs button');
+tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+        tabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+    });
+});
